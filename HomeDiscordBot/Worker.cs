@@ -1,17 +1,15 @@
+using Discord;
+using Discord.WebSocket;
+using HomeDiscordBot.Commands;
+using HomeDiscordBot.Discord;
+
 namespace HomeDiscordBot;
 
-public class Worker(ILogger<Worker> logger) : BackgroundService
+public class Worker(DiscordBot bot) : IHostedService
 {
-    protected override async Task ExecuteAsync(CancellationToken stoppingToken)
-    {
-        while (!stoppingToken.IsCancellationRequested)
-        {
-            if (logger.IsEnabled(LogLevel.Information))
-            {
-                logger.LogInformation("Worker running at: {time}", DateTimeOffset.Now);
-            }
+    public Task StartAsync(CancellationToken cancellationToken) => 
+        bot.StartAsync(cancellationToken);
 
-            await Task.Delay(1000, stoppingToken);
-        }
-    }
+    public Task StopAsync(CancellationToken cancellationToken) =>
+        bot.StopAsync(cancellationToken);
 }
