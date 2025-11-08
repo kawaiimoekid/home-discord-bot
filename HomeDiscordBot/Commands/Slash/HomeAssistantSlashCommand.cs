@@ -64,5 +64,7 @@ public class HomeAssistantSlashCommand(HomeAssistantClient client) : ISlashComma
             case "office":
                 break;
         }
+        
+        await command.RespondAsync($"💡 '{subcommand.Value}' turned `off`.");
     }
 }
