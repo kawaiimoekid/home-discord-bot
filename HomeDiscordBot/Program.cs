@@ -21,6 +21,7 @@ public class Program
         builder.Services.AddSingleton<CommandRegistry>();
         builder.Services.AddSingleton<ISlashCommand, DonutSlashCommand>();
         builder.Services.AddSingleton<ISlashCommand, PingSlashCommand>();
+        builder.Services.AddSingleton<ISlashCommand, HomeAssistantSlashCommand>();
 
         builder.Services.AddSingleton<DiscordBot>();
         
