@@ -16,9 +16,17 @@ public class HomeAssistantSlashCommand(HomeAssistantClient client) : ISlashComma
                 .WithDescription("Commands related to light controls")
                 .WithType(ApplicationCommandOptionType.SubCommandGroup)
                 .AddOption(new SlashCommandOptionBuilder()
-                    .WithName("list")
-                    .WithDescription("Lists all lights")
+                    .WithName("off")
+                    .WithDescription("Turn off")
                     .WithType(ApplicationCommandOptionType.SubCommand)
+                    .AddOption(new SlashCommandOptionBuilder()
+                        .WithName("id")
+                        .WithDescription("Select light to turn off")
+                        .WithRequired(true)
+                        .AddChoice("all", "all")
+                        .AddChoice("office", "office")
+                        .WithType(ApplicationCommandOptionType.String)
+                    )
                 )
             )
             .Build();
@@ -26,7 +34,6 @@ public class HomeAssistantSlashCommand(HomeAssistantClient client) : ISlashComma
     public async Task HandleAsync(SocketSlashCommand command)
     {
         var subcommand = command.Data.Options.First();
-        
         switch (subcommand.Name)
         {
             case "light":
@@ -38,24 +45,24 @@ public class HomeAssistantSlashCommand(HomeAssistantClient client) : ISlashComma
     private async Task HandleLightSubcommand(SocketSlashCommand command, SocketSlashCommandDataOption option)
     {
         var subcommand = option.Options.First();
-        
         switch (subcommand.Name)
         {
-            case "list":
-                await HandleLightListSubcommand(command);
+            case "off":
+                await HandleLightOffSubcommand(command, subcommand);
                 break;
         }
     }
 
-    private async Task HandleLightListSubcommand(SocketSlashCommand command)
+    private async Task HandleLightOffSubcommand(SocketSlashCommand command, SocketSlashCommandDataOption option)
     {
-        var lights = await client.GetLightsAsync();
-        var builder = new StringBuilder();
-        
-        builder.AppendLine("Available lights:");
-        foreach (var light in lights)
-            builder.AppendLine($"- {light.EntityName}: `{light.State}`");
-
-        await command.RespondAsync(builder.ToString());
+        var subcommand = option.Options.First();
+        switch (subcommand.Value)
+        {
+            case "all":
+                await client.TurnOffAllLights();
+                break;
+            case "office":
+                break;
+        }
     }
 }

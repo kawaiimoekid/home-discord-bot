@@ -10,7 +10,7 @@ public class HomeAssistantClient
 {
     private readonly EntityClient _entityClient;
     private readonly StatesClient _statesClient;
-    private readonly EntitiesService _entityService;
+    private readonly ServiceClient _serviceClient;
     
     public HomeAssistantClient(IOptions<HomeAssistantOptions> options)
     {
@@ -18,9 +18,9 @@ public class HomeAssistantClient
         
         _entityClient = ClientFactory.GetClient<EntityClient>();
         _statesClient = ClientFactory.GetClient<StatesClient>();
-        _entityService = new EntitiesService(_entityClient, _statesClient);
+        _serviceClient = ClientFactory.GetClient<ServiceClient>();
     }
 
-    public Task<IEnumerable<Light>> GetLightsAsync() =>
-        _entityService.GetEntities<Light>();
+    public Task TurnOffAllLights() => 
+        _serviceClient.CallService("script.turn_off_all_lights", null);
 }
